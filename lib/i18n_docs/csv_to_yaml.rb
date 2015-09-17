@@ -110,9 +110,14 @@ module I18nDocs
         yaml_string
       end
 
+      # an alias is quoted by default,
+      # convert blah: "&alias content" to convert blah: &alias content
       def remove_alias_quotes(yaml_string)
-        yaml_string.scan(/: \"[\&,\*].*\"/).each do |alias_quoted|
-          yaml_string.gsub!(alias_quoted, alias_quoted.gsub("\"",""))
+        yaml_string.scan(/: \"[\&,\*].*\"$/).each do |alias_quoted|
+          yaml_string.gsub!(alias_quoted, alias_quoted.gsub(/: \"/,": ").gsub(/\"$/,""))
+        end
+        yaml_string.scan(/: \'[\&,\*].*\'$/).each do |alias_quoted|
+          yaml_string.gsub!(alias_quoted, alias_quoted.gsub(/: \'/,": ").gsub(/\'$/,""))
         end
         yaml_string
       end
