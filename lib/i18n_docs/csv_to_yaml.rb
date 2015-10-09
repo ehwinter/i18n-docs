@@ -39,14 +39,23 @@ module I18nDocs
 
 
     def process
-      CSV.foreach(@input_file, headers: true).with_index do |row, i|
-        begin
-          process_row(row.to_hash)
-        rescue Exception => e
-          puts "Error in row: #{i}"
-          puts row
-          raise Exception.new
+      begin
+        i=0
+        CSV.foreach(@input_file, headers: true) do |row|
+          begin
+            i += 1
+            process_row(row.to_hash)
+          rescue Exception => e
+            puts "Error in row: #{i}"
+            puts row
+            raise Exception.new
+          end
         end
+      rescue Exception => e
+        puts "Error in reading input file"
+        puts @input_file
+        puts File.exists?(@input_file)
+        raise Exception.new
       end
     end
 
